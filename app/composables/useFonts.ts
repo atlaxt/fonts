@@ -13,7 +13,9 @@ export interface Font {
 }
 
 export function useFonts() {
-  const { data, status, error } = useFetch<Font[]>('/api/fonts')
+  const { data, status, error } = useFetch<Font[]>('/api/fonts', {
+    server: false,
+  })
 
   const fonts = computed(() => data.value ?? [])
 
