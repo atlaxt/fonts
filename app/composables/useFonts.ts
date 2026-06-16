@@ -19,6 +19,15 @@ interface WebFontsResponse {
   items: Font[]
 }
 
+const ALLOWED_FONTS = [
+  'Figtree',
+  'Outfit',
+  'Inter',
+  'Doto',
+  'Quicksand',
+  'Poppins',
+]
+
 export function useFonts() {
   const config = useRuntimeConfig()
 
@@ -29,7 +38,9 @@ export function useFonts() {
     },
   )
 
-  const fonts = computed(() => data.value?.items ?? [])
+  const fonts = computed(() =>
+    (data.value?.items ?? []).filter(font => ALLOWED_FONTS.includes(font.family)),
+  )
 
   return { fonts, status, error }
 }
