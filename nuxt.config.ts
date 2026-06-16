@@ -12,8 +12,6 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    public: {
-      webFontsDeveloperApi: process.env.WEB_FONTS_DEVELOPER_API,
-    },
+    webFontsDeveloperApi: process.env.WEB_FONTS_DEVELOPER_API,
   },
 })

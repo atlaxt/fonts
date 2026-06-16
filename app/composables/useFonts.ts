@@ -2,7 +2,7 @@ interface FontFile {
   [weight: string]: string
 }
 
-interface Font {
+export interface Font {
   family: string
   variants: string[]
   subsets: string[]
@@ -10,37 +10,12 @@ interface Font {
   lastModified: string
   files: FontFile
   category: string
-  kind: string
-  menu: string
 }
-
-interface WebFontsResponse {
-  kind: string
-  items: Font[]
-}
-
-const ALLOWED_FONTS = [
-  'Figtree',
-  'Outfit',
-  'Inter',
-  'Doto',
-  'Quicksand',
-  'Poppins',
-]
 
 export function useFonts() {
-  const config = useRuntimeConfig()
+  const { data, status, error } = useFetch<Font[]>('/api/fonts')
 
-  const { data, status, error } = useFetch<WebFontsResponse>(
-    'https://www.googleapis.com/webfonts/v1/webfonts',
-    {
-      params: { key: config.public.webFontsDeveloperApi },
-    },
-  )
-
-  const fonts = computed(() =>
-    (data.value?.items ?? []).filter(font => ALLOWED_FONTS.includes(font.family)),
-  )
+  const fonts = computed(() => data.value ?? [])
 
   return { fonts, status, error }
 }
