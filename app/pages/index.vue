@@ -40,6 +40,23 @@ const regularVariants = computed(() =>
 )
 
 const downloadUrl = computed(() => selectedFont.value?.files?.regular ?? null)
+
+const previewWeight = ref('400')
+const previewSize = ref(48)
+const previewSizes = [24, 36, 48, 72, 96]
+
+const availableWeights = computed(() =>
+  (selectedFont.value?.variants ?? [])
+    .filter(v => !v.includes('italic'))
+    .map(v => (v === 'regular' ? '400' : v))
+    .sort((a, b) => Number(a) - Number(b)),
+)
+
+watch(availableWeights, (weights) => {
+  if (weights.length && !weights.includes(previewWeight.value)) {
+    previewWeight.value = weights.includes('400') ? '400' : (weights[Math.floor(weights.length / 2)] ?? weights[0]!)
+  }
+})
 </script>
 
 <template>
@@ -54,7 +71,7 @@ const downloadUrl = computed(() => selectedFont.value?.files?.regular ?? null)
         <div class="flex items-end justify-between px-6 py-5 sm:px-10 sm:py-6 lg:px-16 lg:py-8">
           <button class="flex-1 text-left min-w-0" @click="isOpen = !isOpen">
             <span
-              class="font-thin tracking-tight leading-none text-highlighted block truncate"
+              class="overflow-visible font-thin tracking-tight leading-none text-highlighted block truncate"
               style="font-size: clamp(1.5rem, 5.5vw, 4.5rem)"
               :style="fontStyle"
             >
@@ -194,14 +211,70 @@ const downloadUrl = computed(() => selectedFont.value?.files?.regular ?? null)
             </div>
           </div>
         </div>
+
+        <!-- Preview -->
+        <div class="border-t border-default pt-8 mt-8 shrink-0">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <p class="text-[9px] font-semibold tracking-[0.22em] uppercase text-dimmed">
+              Preview
+            </p>
+            <div class="flex flex-wrap items-center gap-6">
+              <div class="flex items-center gap-3">
+                <span class="text-[9px] font-semibold tracking-[0.22em] uppercase text-dimmed">Weight</span>
+                <div class="flex items-center gap-1">
+                  <button
+                    v-for="w in availableWeights"
+                    :key="w"
+                    class="text-xs px-2.5 py-1 transition-colors"
+                    :class="previewWeight === w ? 'bg-inverted text-inverted' : 'text-muted hover:text-highlighted hover:bg-elevated'"
+                    @click="previewWeight = w"
+                  >
+                    {{ w }}
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-[9px] font-semibold tracking-[0.22em] uppercase text-dimmed">Size</span>
+                <div class="flex items-center gap-1">
+                  <button
+                    v-for="s in previewSizes"
+                    :key="s"
+                    class="text-xs px-2.5 py-1 transition-colors"
+                    :class="previewSize === s ? 'bg-inverted text-inverted' : 'text-muted hover:text-highlighted hover:bg-elevated'"
+                    @click="previewSize = s"
+                  >
+                    {{ s }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p
+            class="text-highlighted leading-tight"
+            :style="{ fontWeight: previewWeight, fontSize: `${previewSize}px` }"
+          >
+            The quick brown fox jumps over the lazy dog.
+          </p>
+        </div>
       </div>
     </div>
 
     <!-- Footer -->
     <footer class="shrink-0 border-t border-default px-6 sm:px-10 lg:px-16 py-5 flex items-center justify-between gap-4">
-      <p class="text-xs text-dimmed">
-        Made by Atlas Yiğit Aydın
-      </p>
+      <div class="flex items-center gap-5">
+        <p class="text-xs text-dimmed">
+          Made by Atlas Yiğit Aydın
+        </p>
+        <a
+          href="https://github.com/atlaxt/fonts"
+          target="_blank"
+          rel="noopener"
+          class="text-xs text-dimmed hover:text-highlighted transition-colors tracking-wider"
+        >
+          GitHub ↗
+        </a>
+      </div>
       <a href="https://atlaxt.me" target="_blank" rel="noopener" class="hover:opacity-70 transition-opacity shrink-0">
         <UColorModeImage
           light="https://atlaxt.me/sign_black.png"
