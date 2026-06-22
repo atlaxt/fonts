@@ -5,7 +5,7 @@ const ALLOWED_FONTS = [
   'Doto',
   'Quicksand',
   'Poppins',
-  'Helvetica',
+  'Geist',
 ]
 
 export default defineEventHandler(async (event) => {
